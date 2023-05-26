@@ -4,10 +4,10 @@ import "fmt"
 
 func main() {
 	const (
-		age = 22
-		employed = true
+		age                 = 22
+		employed            = true
 		years_of_experience = 3
-		salary = 8000
+		salary              = 8000
 	)
 
 	if age > 22 && employed && years_of_experience > 1 {
