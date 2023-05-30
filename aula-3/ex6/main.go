@@ -89,7 +89,7 @@ func RunBenchmarks(size int) (fastestName string, fastestTime time.Duration) {
 	}
 
 	fastestId := -1
-	for completed := 0; completed < len(benchmarkInfos); completed++ {
+	for range benchmarkInfos {
 		completedId := <-c
 		completedTime := time.Now().Sub(startTimes[completedId])
 
