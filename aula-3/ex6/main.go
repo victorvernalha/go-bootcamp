@@ -72,31 +72,25 @@ func SelectionSort(nums []int, c chan int) {
 	c <- SELECTION_SORT
 }
 
-func RunBenchmarks(size int) (fastestName string, fastestTime time.Duration) {
-	benchmarkInfos := map[int]BenchmarkInfo{
-		BUBBLE_SORT:    {BubbleSort, "Bubble sort"},
-		INSERTION_SORT: {InsertionSort, "Insertion sort"},
-		SELECTION_SORT: {SelectionSort, "Selection sort"},
-	}
-
+func RunBenchmarks(benchmarks map[int]BenchmarkInfo, size int) (fastestName string, fastestTime time.Duration) {
 	array := rand.Perm(size)
 	c := make(chan int)
 
 	startTimes := make(map[int]time.Time)
-	for id, benchmarkInfo := range benchmarkInfos {
+	for id, benchmarkInfo := range benchmarks {
 		startTimes[id] = time.Now()
 		go benchmarkInfo.Routine(array, c)
 	}
 
 	fastestId := -1
-	for range benchmarkInfos {
+	for range benchmarks {
 		completedId := <-c
 		completedTime := time.Now().Sub(startTimes[completedId])
 
 		if fastestId == -1 || completedTime < fastestTime {
 			fastestId = completedId
 			fastestTime = completedTime
-			fastestName = benchmarkInfos[fastestId].RoutineName
+			fastestName = benchmarks[fastestId].RoutineName
 		}
 	}
 
@@ -105,9 +99,14 @@ func RunBenchmarks(size int) (fastestName string, fastestTime time.Duration) {
 
 func main() {
 	arraySizes := []int{100, 1000, 10000}
+	benchmarks := map[int]BenchmarkInfo{
+		BUBBLE_SORT:    {BubbleSort, "Bubble sort"},
+		INSERTION_SORT: {InsertionSort, "Insertion sort"},
+		SELECTION_SORT: {SelectionSort, "Selection sort"},
+	}
 
 	for _, size := range arraySizes {
-		routineName, routineTime := RunBenchmarks(size)
+		routineName, routineTime := RunBenchmarks(benchmarks, size)
 		fmt.Printf("Fastest algorithm for size %d was %s taking %s\n", size, routineName, routineTime)
 	}
 }
